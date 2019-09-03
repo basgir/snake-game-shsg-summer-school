@@ -104,6 +104,9 @@ def show_rendert_txt(text, color, y, font_size):
         text (string): text string
         text (string): text string
     
+    Returns:
+        None
+    
     """
     txt_to_display_font = pygame.font.Font('techkr/TECHKR__.TTF', font_size)
     txt_to_display = txt_to_display_font.render(text,0,color)
@@ -113,6 +116,7 @@ def show_rendert_txt(text, color, y, font_size):
     screen.blit(txt_to_display, txt_to_display_rect)
 
 def intro():
+    """Show the intro screen."""
     screen.fill(BLACK)
     show_rendert_txt("SnakeHSG", (255, 179, 0), 30, 250)
     intro = pygame.image.load("snake_intro.png")
@@ -126,6 +130,7 @@ def intro():
     
 
 def game_over():
+    """Shows the game_over screen and set the score"""
     screen.fill(BLACK)
     show_rendert_txt("YOU DIED!", (255,0,0), 60, 250)
     show_rendert_txt(f"Score {score}", (255,255,255), 260, 80)
@@ -134,13 +139,30 @@ def game_over():
     pygame.display.flip()
 
 def show_snake(x_snake,y_snake, snake, snake_moves):
+    """Display the snake on the grid
+    
+    Args:
+        x_snake (int) : x position of snake
+        y_snake (int) : y position of snake
+        snake (list) : snake size
+        snake_moves (list) : list of past moves of the snake
+    Returns:
+        None
+    """
+    # For the size of the snake we draw circle.
     for i in range(len(snake)):
+        # If snake is 1 then it is part of the snake
         if snake[i] == 1:
+            # We define the position of the snake by using the snake_moves at index 
             pos = (snake_moves[i][0], snake_moves[i][1])
+
+            # If it is superspeed the colors are randomly selected, like the star in mario
             if superspeed:
                 red = random.randint(0,255)
                 green = random.randint(0,255)
                 blue = random.randint(0,255)
+
+            # Else we use standard green shades to color the snake
             else:
                 green = 255
                 green = green - i * 10
@@ -150,32 +172,69 @@ def show_snake(x_snake,y_snake, snake, snake_moves):
                 blue = 0
 
             pygame.draw.ellipse(screen, (red,green,blue), pygame.Rect(snake_moves[i][0], snake_moves[i][1], width, height))
-            #pygame.draw.rect(screen,color_snake_head, pygame.Rect(snake_moves[i][0], snake_moves[i][1], width, height))
         
 def show_eyes(pos_eyes_1, pos_eyes_2):
+    """Display the eyes of the snake
+    
+    Args:
+        pos_eyes_1 (int): position of the first eye
+        pos_eyes_2 (int): position of the first eye
+    """
     color_eyes = BLACK
     radius = 4
     pygame.draw.circle(screen,color_eyes, pos_eyes_1, radius)
     pygame.draw.circle(screen,color_eyes, pos_eyes_2, radius)   
 
 def show_tongue(x_tongue, y_tongue, width, height):
+    """Display the tongue of the snake
+    
+    Args:
+        x_tongue (int): x positon of the tongue
+        y_tongue (int): y positon of the tongue
+        width (int): width of the tongue
+        heigh (int): height of the tongue
+    """
     color_tongue = RED
     pygame.draw.rect(screen,color_tongue, pygame.Rect(x_tongue, y_tongue, width, height))      
 
 def record_snake_position(x_snake, y_snake):
+    """Record the postion of the snake
+    
+    Args:
+        x_snake (int): x position of the snake
+        y_snake (int): y position of the snake
+    
+    Returns:
+        snake_moves (list): list of the past snake moves
+    """
+    # We append the moves
     snake_moves.append((x_snake,y_snake))
     return snake_moves
 
 def show_apple(x_apple,y_apple):
+    """Display the apple at given x and y
+    
+    Args:
+        x_apple (int) : X position of the apple
+        y_apple (int) : y position of the apple
+    """
+
     apple_rect.x = x_apple
     apple_rect.y = y_apple
     color_apple = BLACK
 
 def show_obstacle(x_obstacle,y_obstacle):
+    """Display the bomb at given x and y
+    
+    Args:
+        x_bomb (int) : X position of the bomb
+        y_bomb (int) : y position of the bomb
+    """
     bomb_rect.x = x_obstacle
     bomb_rect.y = y_obstacle
 
 def show_grid():
+    """Display the grid"""
     for row in range(grid_size):
         for column in range(grid_size):
             color = BLACK
@@ -183,6 +242,19 @@ def show_grid():
 
 # if the postion of the apple and the snake incl. body are the same, then change the x and y positoin of the apple
 def create_random_position_apple(snake,snake_moves,grid_size, width, height, margin):
+    """Create a new apple at a random position
+
+    Args:
+        snake (list) : list of the body of the snake
+        snake_moves (list) : list of snake's past moves
+        grid_size (tuple) : tuple of width / height
+        height (int) : height of the window size
+        width (int) : width of the window size
+    
+    Returns:
+        x_apple_new (int) : the new apple x position
+        y_apple_new (int) : the new apple y position
+    """
     x_apple_new = margin + (random.randint(0,grid_size-1)*(width+margin))
     y_apple_new = margin + (random.randint(0,grid_size-1)*(height+margin))
     for i in range(len(snake)):
@@ -196,6 +268,19 @@ def create_random_position_apple(snake,snake_moves,grid_size, width, height, mar
             return x_apple_new, y_apple_new
 
 def create_random_position_obstacle(snake,snake_moves,grid_size, width, height, margin):
+    """Create a new bomb at a random position
+
+    Args:
+        snake (list) : list of the body of the snake
+        snake_moves (list) : list of snake's past moves
+        grid_size (tuple) : tuple of width / height
+        height (int) : height of the window size
+        width (int) : width of the window size
+    
+    Returns:
+        x_obstacle_new (int) : the new obstacle x position
+        y_obstacle_new (int) : the new obstacle y position
+    """
     x_obstacle_new = margin + (random.randint(0,grid_size-1)*(width+margin))
     y_obstacle_new = margin + (random.randint(0,grid_size-1)*(height+margin))
     for i in range(len(snake)):
@@ -209,14 +294,41 @@ def create_random_position_obstacle(snake,snake_moves,grid_size, width, height, 
             return x_obstacle_new, y_obstacle_new
 
 def update_speed(speed):
+    """update the speed of the snake """
     pygame.time.set_timer(MOVEEVENT, speed)
 
 def change_music(filename):
+    """Changes the background music"""
     pygame.mixer.music.stop()
     pygame.mixer.music.load(filename) #music player
     pygame.mixer.music.play(-1)
 
 def eat_apple_and_define_new(x_head, y_head, x_apple, y_apple, score, grid_size, width, height, margin, snake,snake_moves, speed, eat_sound):
+    """Create a new apple at a random position
+
+    Args:
+        x_head (int) : x position of the snake
+        y_head (int) : y position of the snake
+        x_apple (int) : y position of the apple
+        y_apple (int) : y position of the apple
+        score (int) :  current score of the game
+        grid_size (tuple) :  width and height
+        width (int) :  width of a grid bloc
+        height (int) :  height of a grid bloc
+        margin (int) :  margin of a grid
+        snake (list) : position of the body
+        snake_moves (list) : past position of the snake's body
+        speed (int) : game's speed
+        eat_sound (pygame.Sound) : Eat an apple sound
+
+    Returns:
+        x_apple (int) : the x positon of the apple
+        y_apple (int) : the y positon of the apple
+        score (int) : game's score
+        snake (list) : list of the snake position
+        snake_moves (list) : the list snake moves
+        speed (int) : game's speed
+    """
     if (x_head == x_apple) and (y_head == y_apple):
         snake.append(1)
         if superspeed:
