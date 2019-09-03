@@ -23,7 +23,7 @@ def init_variables():
     # We define basic colors
     BLACK = (0, 0, 0)
     WHITE = (255, 255, 255)
-    GREEN = (0, 255, 0)
+    GREEN = (140, 255, 0)
     RED = (255, 0, 0)
     BLUE = (137, 207, 240)
 
@@ -93,7 +93,7 @@ def start_music():
     # We load the sound effects
     eat_sound = pygame.mixer.Sound("apple-crunch.wav")
     boom_sound = pygame.mixer.Sound("boom.wav")
-    return eat_sound, boom_soundtext string
+    return eat_sound, boom_sound
 
 def show_rendert_txt(text, color, y, font_size):
     """Use to display text in a Game like font
@@ -114,28 +114,43 @@ def show_rendert_txt(text, color, y, font_size):
 
 def intro():
     screen.fill(BLACK)
-    show_rendert_txt("SnakeHSG", (255, 179, 0), 60, 250)
+    show_rendert_txt("SnakeHSG", (255, 179, 0), 30, 250)
     intro = pygame.image.load("snake_intro.png")
     intro = pygame.transform.scale(intro, (200, 200))
     intro_rect = intro.get_rect()
     intro_rect.center = (max_x_screen_size/2, 400)
+    show_rendert_txt("please press SPACE...", (255, 255, 255), 490, 60)
+    show_rendert_txt("(C) 2019, Chantal, Anna-Maria, Ylli, Fabio and Mr. Bastien", (255, 255, 255), 670, 40)
     screen.blit(intro, intro_rect) # prints/renders the apple on new position
     pygame.display.flip()
     
 
 def game_over():
     screen.fill(BLACK)
-    show_rendert_txt("You died!", (255,0,0), 60, 250)
+    show_rendert_txt("YOU DIED!", (255,0,0), 60, 250)
     show_rendert_txt(f"Score {score}", (255,255,255), 260, 80)
-    show_rendert_txt("Try again?...Looser!", (255,255,255), 400, 80)
-    show_rendert_txt("(Y)ES?...(N)O?!", (255,255,255), 500, 80)
+    show_rendert_txt("Try again?...LOOSER!", (255,255,255), 400, 80)
+    show_rendert_txt("(Y)es?...(N)o?", (255,255,255), 500, 80)
     pygame.display.flip()
 
 def show_snake(x_snake,y_snake, snake, snake_moves):
-    color_snake_head = GREEN
     for i in range(len(snake)):
         if snake[i] == 1:
-            pygame.draw.rect(screen,color_snake_head, pygame.Rect(snake_moves[i][0], snake_moves[i][1], width, height))
+            pos = (snake_moves[i][0], snake_moves[i][1])
+            if superspeed:
+                red = random.randint(0,255)
+                green = random.randint(0,255)
+                blue = random.randint(0,255)
+            else:
+                green = 255
+                green = green - i * 10
+                if green < 0:
+                    green = 255
+                red = 140
+                blue = 0
+
+            pygame.draw.ellipse(screen, (red,green,blue), pygame.Rect(snake_moves[i][0], snake_moves[i][1], width, height))
+            #pygame.draw.rect(screen,color_snake_head, pygame.Rect(snake_moves[i][0], snake_moves[i][1], width, height))
         
 def show_eyes(pos_eyes_1, pos_eyes_2):
     color_eyes = BLACK
@@ -346,6 +361,8 @@ while done == False:
             if event.key == pygame.K_1:
                 change_music("gameover.mp3")
             if event.key == pygame.K_2:
+                change_music("gameover2.mp3")
+            if event.key == pygame.K_3:
                 change_music("imblue.mp3")
             if event.key == pygame.K_LEFT:
                 direction_state = "LEFT"
