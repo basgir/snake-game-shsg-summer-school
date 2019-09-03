@@ -219,7 +219,11 @@ def change_music(filename):
 def eat_apple_and_define_new(x_head, y_head, x_apple, y_apple, score, grid_size, width, height, margin, snake,snake_moves, speed, eat_sound):
     if (x_head == x_apple) and (y_head == y_apple):
         snake.append(1)
-        score +=1
+        if superspeed:
+            score +=5
+        else:
+            score+=1
+
         if speed  > 100:
             speed -= 20
             update_speed(speed)
@@ -359,11 +363,15 @@ while done == False:
                 superspeed = True
                 change_music("superspeed.mp3")
             if event.key == pygame.K_1:
-                change_music("gameover.mp3")
+                change_music("thriller.mp3")
             if event.key == pygame.K_2:
-                change_music("gameover2.mp3")
+                change_music("tetris.mp3")
             if event.key == pygame.K_3:
                 change_music("imblue.mp3")
+            if event.key == pygame.K_4:
+                change_music("another_one_bites.mp3")
+            if event.key == pygame.K_m:
+                pygame.mixer.music.stop()
             if event.key == pygame.K_LEFT:
                 direction_state = "LEFT"
             if event.key == pygame.K_RIGHT:
