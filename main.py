@@ -2,7 +2,6 @@ import pygame
 import random
 import os
 import numpy as np
-import mutagen.mp3
 
 # initialize
 pygame.init()
@@ -45,13 +44,14 @@ def init_variables():
     size = [max_x_screen_size, max_y_screen_size ]
     screen = pygame.display.set_mode(size)
 
-
     # inital settings
     snake = [1]
     snake_moves = []
     score = 0
     superspeed = False
     return speed,volume,MOVEEVENT,t,BLACK,WHITE,GREEN,RED,BLUE,width,height,grid_size,margin,max_x_screen_size,max_y_screen_size,size,screen,snake,snake_moves,score, superspeed   
+
+
 def load_sprites():
     # load picture
     apple = pygame.image.load("mushroom.jpg")
@@ -67,6 +67,7 @@ def load_sprites():
     return apple,apple_rect, bomb, bomb_rect, font
 
 def start_music():
+
     filename = "03 Chibi Ninja.mp3"
     pygame.mixer.music.load(filename) #music player
     pygame.mixer.music.set_volume(volume)
@@ -77,19 +78,31 @@ def start_music():
     boom_sound = pygame.mixer.Sound("boom.wav")
     return eat_sound, boom_sound
 
-def game_over():
-    # change_music("gameover.mp3")
-    #you_died = ['You died!',
-                #'You want to try again?',
-                #'Y or N']
-    you_died_font = pygame.font.SysFont('times new roman', 40)
-    you_died_surface = you_died_font.render("You died! Try again? Y or N", 0, RED)
-    you_died_font_second=you_died_font.render(f"Time:",1,WHITE)
-    screen.blit(you_died_font_second,(max_x_screen_size/2,max_y_screen_size/2))  #prints the timer on the screen
-    you_died_rect = you_died_surface.get_rect()
-    you_died_rect.center = (max_x_screen_size/2, max_y_screen_size/4)
+def show_rendert_txt(text, color, y, font_size):
+    txt_to_display_font = pygame.font.Font('techkr/TECHKR__.TTF', font_size)
+    txt_to_display = txt_to_display_font.render(text,0,color)
+    txt_to_display_rect = txt_to_display.get_rect()
+    txt_to_display_rect.center = (max_x_screen_size/2, y)
+    txt_to_display_rect.y = y
+    screen.blit(txt_to_display, txt_to_display_rect)
+
+def intro():
     screen.fill(BLACK)
-    screen.blit(you_died_surface, you_died_rect)
+    show_rendert_txt("SnakeHSG", (255, 179, 0), 60, 250)
+    intro = pygame.image.load("snake_intro.png")
+    intro = pygame.transform.scale(intro, (200, 200))
+    intro_rect = intro.get_rect()
+    intro_rect.center = (max_x_screen_size/2, 400)
+    screen.blit(intro, intro_rect) # prints/renders the apple on new position
+    pygame.display.flip()
+    
+
+def game_over():
+    screen.fill(BLACK)
+    show_rendert_txt("You died!", (255,0,0), 60, 250)
+    show_rendert_txt(f"Score {score}", (255,255,255), 260, 80)
+    show_rendert_txt("Try again?...Looser!", (255,255,255), 400, 80)
+    show_rendert_txt("(Y)ES?...(N)O?!", (255,255,255), 500, 80)
     pygame.display.flip()
 
 def show_snake(x_snake,y_snake, snake, snake_moves):
@@ -156,6 +169,7 @@ def create_random_position_obstacle(snake,snake_moves,grid_size, width, height, 
 
 def update_speed(speed):
     pygame.time.set_timer(MOVEEVENT, speed)
+
 def change_music(filename):
     pygame.mixer.music.stop()
     pygame.mixer.music.load(filename) #music player
@@ -168,8 +182,6 @@ def eat_apple_and_define_new(x_head, y_head, x_apple, y_apple, score, grid_size,
         if speed  > 100:
             speed -= 20
             update_speed(speed)
-        
-            
         eat_sound.play()
         x_apple, y_apple = create_random_position_apple(snake, snake_moves, grid_size, width, height, margin)
         snake, snake_moves = cut_lenght_of_list(snake, snake_moves)
@@ -218,7 +230,7 @@ def reinitialize_game():
 
     # records initial timer (start ticker)
     start_ticks=pygame.time.get_ticks()
-
+    change_music("03 Chibi Ninja.mp3")
     done = False
     direction_state = "RIGHT"
     do_again = True
@@ -270,16 +282,18 @@ apple, apple_rect, bomb, bomb_rect, font = load_sprites()
 eat_sound, boom_sound = start_music()
 rect_xp,rect_yp,rect_change_xp,rect_change_yp,tong_width,tong_height,x_tongue,y_tongue,pos_eyes_1,pos_eyes_2,x_apple_random,y_apple_random, x_obstacle, y_obstacle, snake_moves,start_ticks,done,direction_state,do_again,gameover = reinitialize_game()
 
-
+intro()
+start = False
 
 while done == False:
+
     for event in pygame.event.get():    # check for any events
         if event.type == pygame.QUIT:
-            pygame.quit()
-
+            done = True
         # Kill game if snake leaves boundries
         if rect_xp>max_x_screen_size or rect_xp<0:
             gameover = True
+            
         if rect_yp>max_y_screen_size or rect_yp<0:
             gameover = True
                     
@@ -298,10 +312,15 @@ while done == False:
 
         # act upon key events and sets new x and y positions for snake, tongue, eyes
         if event.type == pygame.KEYDOWN:
- 
+            if event.key == pygame.K_SPACE:
+                start = True
             if event.key == pygame.K_0:
                 superspeed = True
                 change_music("superspeed.mp3")
+            if event.key == pygame.K_1:
+                change_music("gameover.mp3")
+            if event.key == pygame.K_2:
+                change_music("gameover2.mp3")
             if event.key == pygame.K_LEFT:
                 direction_state = "LEFT"
             if event.key == pygame.K_RIGHT:
@@ -316,10 +335,9 @@ while done == False:
             if event.key == pygame.K_y and gameover == True:
                 speed,volume,MOVEEVENT,t,BLACK,WHITE,GREEN,RED,BLUE,width,height,grid_size,margin,max_x_screen_size,max_y_screen_size,size,screen,snake,snake_moves,score, superspeed = init_variables()
                 apple, apple_rect,bomb, bomb_rect, font = load_sprites()
-                eat_sound = start_music()
                 rect_xp,rect_yp,rect_change_xp,rect_change_yp,tong_width,tong_height,x_tongue,y_tongue,pos_eyes_1,pos_eyes_2,x_apple_random,y_apple_random, x_obstacle, y_obstacle, snake_moves,start_ticks,done,direction_state,do_again,gameover = reinitialize_game()
 
-        if event.type == MOVEEVENT: # is called every 't' milliseconds
+        if event.type == MOVEEVENT and start==True: # is called every 't' milliseconds
             if superspeed == True:
                 update_speed(50)
 
@@ -329,23 +347,25 @@ while done == False:
             x_apple_random, y_apple_random, score, snake, snake_moves, speed = eat_apple_and_define_new(rect_xp, rect_yp,x_apple_random, y_apple_random, score,grid_size, width, height, margin, snake, snake_moves,speed)
 
     if gameover:
+        change_music("gameover.mp3")
         game_over()
     else:
-        screen.fill(pygame.Color('WHITE'))
-        show_grid()
-        show_snake(rect_xp,rect_yp, snake, snake_moves)
-        show_tongue(x_tongue, y_tongue, tong_width, tong_height)
-        show_eyes(pos_eyes_1, pos_eyes_2)
-        show_apple(x_apple_random, y_apple_random) # renders new position of apple
-        screen.blit(apple, apple_rect) # prints/renders the apple on new position
-        show_obstacle(x_obstacle, y_obstacle)
-        screen.blit(bomb, bomb_rect) # prints/renders the apple on new position
-        #show timer & score
-        time_display=font.render(f"Time: {int((pygame.time.get_ticks()-start_ticks)/1000)} s",1,WHITE)
-        screen.blit(time_display,(510,0))  #prints the timer on the screen
-        score_display=font.render(f"Score: {score}",1,WHITE)
-        screen.blit(score_display,(510,36))  #prints the timer on the screen
-        score_display=font.render(f"Speed: {1/speed*1000}",1,WHITE)
-        screen.blit(score_display,(510,72))  #prints the timer on the screen
+        if start:
+            screen.fill(pygame.Color('WHITE'))
+            show_grid()
+            show_snake(rect_xp,rect_yp, snake, snake_moves)
+            show_tongue(x_tongue, y_tongue, tong_width, tong_height)
+            show_eyes(pos_eyes_1, pos_eyes_2)
+            show_apple(x_apple_random, y_apple_random) # renders new position of apple
+            screen.blit(apple, apple_rect) # prints/renders the apple on new position
+            show_obstacle(x_obstacle, y_obstacle)
+            screen.blit(bomb, bomb_rect) # prints/renders the apple on new position
+            #show timer & score
+            time_display=font.render(f"Time: {int((pygame.time.get_ticks()-start_ticks)/1000)} s",1,WHITE)
+            screen.blit(time_display,(510,0))  #prints the timer on the screen
+            score_display=font.render(f"Score: {score}",1,WHITE)
+            screen.blit(score_display,(510,36))  #prints the timer on the screen
+            score_display=font.render(f"Speed: {1/speed*1000}",1,WHITE)
+            screen.blit(score_display,(510,72))  #prints the timer on the screen
 
-        pygame.display.update()
+            pygame.display.update()
