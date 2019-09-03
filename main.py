@@ -10,75 +10,101 @@ pygame.mixer.init()
 
 
 def init_variables():
+    """Initialize all the required variables for the game to start."""
+    
     # Game speed
     speed = 200
-    volume = 5
-
-    # at ticking events
+    
+    # We add a ticking event for the snake to move automatically
     MOVEEVENT = pygame.USEREVENT+1 
     t = speed
     pygame.time.set_timer(MOVEEVENT, t)
 
-
+    # We define basic colors
     BLACK = (0, 0, 0)
     WHITE = (255, 255, 255)
     GREEN = (0, 255, 0)
     RED = (255, 0, 0)
     BLUE = (137, 207, 240)
 
-    # puts the window of the game in the center of the PC screen
+    # puts the window of the game in the center of the screen
     os.environ['SDL_VIDEO_CENTERED'] = '0'
 
-    # defines the size of one cell of the total grid
+    # defines the size of one cell
     width = 35
     height = width
 
-    grid_size = 20 # number of rows and columns
-    margin = 1  # margin between the different cells of the grid
+    # number of rows and columns
+    grid_size = 20
 
+    # margin between the different cells of the grid 
+    margin = 1  
 
-    max_x_screen_size = grid_size*(width+margin)
-    max_y_screen_size = grid_size*(height+margin)
+    # Compute the size of the grid
+    max_x_screen_size = grid_size*(width+margin) + margin
+    max_y_screen_size = grid_size*(height+margin) + margin
 
-
-    size = [max_x_screen_size, max_y_screen_size ]
-    screen = pygame.display.set_mode(size)
+    # We give pygame the size of our game window 
+    screen = pygame.display.set_mode((max_x_screen_size, max_y_screen_size))
 
     # inital settings
+    # snake defines the size of the snake
     snake = [1]
+
+    # snake moves records all the snake moves
     snake_moves = []
+
+    # Edit score
     score = 0
+
+    # If the game is in superspeed mode
     superspeed = False
-    return speed,volume,MOVEEVENT,t,BLACK,WHITE,GREEN,RED,BLUE,width,height,grid_size,margin,max_x_screen_size,max_y_screen_size,size,screen,snake,snake_moves,score, superspeed   
+
+    return speed,MOVEEVENT,t,BLACK,WHITE,GREEN,RED,BLUE,width,height,grid_size,margin,max_x_screen_size,max_y_screen_size,screen,snake,snake_moves,score, superspeed   
 
 
 def load_sprites():
-    # load picture
+    """Load the sprites into the game"""
+
+    # We import the mushroom
     apple = pygame.image.load("mushroom.jpg")
     apple = pygame.transform.scale(apple, (width, height))
     apple_rect = apple.get_rect()
 
-        # bomb adden
+    # We need to import the bomb image
     bomb = pygame.image.load("bomb_2.jpg")
     bomb = pygame.transform.scale(bomb, (width, height))
     bomb_rect = bomb.get_rect()
 
-    font=pygame.font.SysFont("Verdana",30)
-    return apple,apple_rect, bomb, bomb_rect, font
+    return apple,apple_rect, bomb, bomb_rect
 
 def start_music():
+    """Start the music"""
 
+    # We define the first song
     filename = "03 Chibi Ninja.mp3"
+    volume = 5
+
+    # We load the sound
     pygame.mixer.music.load(filename) #music player
     pygame.mixer.music.set_volume(volume)
-
     pygame.mixer.music.play(-1)
 
+    # We load the sound effects
     eat_sound = pygame.mixer.Sound("apple-crunch.wav")
     boom_sound = pygame.mixer.Sound("boom.wav")
-    return eat_sound, boom_sound
+    return eat_sound, boom_soundtext string
 
 def show_rendert_txt(text, color, y, font_size):
+    """Use to display text in a Game like font
+    
+    Args:
+        text (string): text string
+        color (rgb): rgb color e.g. (255,0,0)
+        text (string): text string
+        text (string): text string
+    
+    """
     txt_to_display_font = pygame.font.Font('techkr/TECHKR__.TTF', font_size)
     txt_to_display = txt_to_display_font.render(text,0,color)
     txt_to_display_rect = txt_to_display.get_rect()
@@ -129,7 +155,7 @@ def show_apple(x_apple,y_apple):
     apple_rect.x = x_apple
     apple_rect.y = y_apple
     color_apple = BLACK
-    # pygame.draw.rect(screen,color_apple, pygame.Rect(x_apple, y_apple, width, height))
+
 def show_obstacle(x_obstacle,y_obstacle):
     bomb_rect.x = x_obstacle
     bomb_rect.y = y_obstacle
@@ -173,7 +199,7 @@ def update_speed(speed):
 def change_music(filename):
     pygame.mixer.music.stop()
     pygame.mixer.music.load(filename) #music player
-    pygame.mixer.music.play(times)
+    pygame.mixer.music.play(-1)
 
 def eat_apple_and_define_new(x_head, y_head, x_apple, y_apple, score, grid_size, width, height, margin, snake,snake_moves, speed, eat_sound):
     if (x_head == x_apple) and (y_head == y_apple):
@@ -277,9 +303,9 @@ def move_snake(direction, rect_xp, rect_yp):
         pos_eyes_2 = (rect_xp + 10, rect_yp - 10 + height)
         return rect_xp, rect_yp, x_tongue, y_tongue, tong_width, tong_height, pos_eyes_1,pos_eyes_2
 
-speed,volume,MOVEEVENT,t,BLACK,WHITE,GREEN,RED,BLUE,width,height,grid_size,margin,max_x_screen_size,max_y_screen_size,size,screen,snake,snake_moves,score, superspeed = init_variables()
+speed,MOVEEVENT,t,BLACK,WHITE,GREEN,RED,BLUE,width,height,grid_size,margin,max_x_screen_size,max_y_screen_size,screen,snake,snake_moves,score, superspeed = init_variables()
 eat_sound, boom_sound = start_music()
-apple, apple_rect, bomb, bomb_rect, font = load_sprites()
+apple, apple_rect, bomb, bomb_rect = load_sprites()
 rect_xp,rect_yp,rect_change_xp,rect_change_yp,tong_width,tong_height,x_tongue,y_tongue,pos_eyes_1,pos_eyes_2,x_apple_random,y_apple_random, x_obstacle, y_obstacle, snake_moves,start_ticks,done,direction_state,do_again,gameover = reinitialize_game()
 
 intro()
@@ -320,7 +346,7 @@ while done == False:
             if event.key == pygame.K_1:
                 change_music("gameover.mp3")
             if event.key == pygame.K_2:
-                change_music("gameover2.mp3")
+                change_music("imblue.mp3")
             if event.key == pygame.K_LEFT:
                 direction_state = "LEFT"
             if event.key == pygame.K_RIGHT:
@@ -333,8 +359,8 @@ while done == False:
                 pygame.quit()
 
             if event.key == pygame.K_y and gameover == True:
-                speed,volume,MOVEEVENT,t,BLACK,WHITE,GREEN,RED,BLUE,width,height,grid_size,margin,max_x_screen_size,max_y_screen_size,size,screen,snake,snake_moves,score, superspeed = init_variables()
-                apple, apple_rect,bomb, bomb_rect, font = load_sprites()
+                speed,MOVEEVENT,t,BLACK,WHITE,GREEN,RED,BLUE,width,height,grid_size,margin,max_x_screen_size,max_y_screen_size,screen,snake,snake_moves,score, superspeed = init_variables()
+                apple, apple_rect,bomb, bomb_rect = load_sprites()
                 rect_xp,rect_yp,rect_change_xp,rect_change_yp,tong_width,tong_height,x_tongue,y_tongue,pos_eyes_1,pos_eyes_2,x_apple_random,y_apple_random, x_obstacle, y_obstacle, snake_moves,start_ticks,done,direction_state,do_again,gameover = reinitialize_game()
 
         if event.type == MOVEEVENT and start==True: # is called every 't' milliseconds
@@ -347,7 +373,6 @@ while done == False:
             x_apple_random, y_apple_random, score, snake, snake_moves, speed = eat_apple_and_define_new(rect_xp, rect_yp,x_apple_random, y_apple_random, score,grid_size, width, height, margin, snake, snake_moves,speed,eat_sound)
 
     if gameover:
-        change_music("gameover.mp3")
         game_over()
     else:
         if start:
@@ -361,6 +386,7 @@ while done == False:
             show_obstacle(x_obstacle, y_obstacle)
             screen.blit(bomb, bomb_rect) # prints/renders the apple on new position
             #show timer & score
+            font=pygame.font.SysFont("Verdana",30)    
             time_display=font.render(f"Time: {int((pygame.time.get_ticks()-start_ticks)/1000)} s",1,WHITE)
             screen.blit(time_display,(510,0))  #prints the timer on the screen
             score_display=font.render(f"Score: {score}",1,WHITE)
