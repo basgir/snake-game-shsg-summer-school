@@ -78,7 +78,6 @@ def start_music():
     return eat_sound, boom_sound
 
 def game_over():
-    # change_music("gameover.mp3")
     #you_died = ['You died!',
                 #'You want to try again?',
                 #'Y or N']
@@ -156,12 +155,12 @@ def create_random_position_obstacle(snake,snake_moves,grid_size, width, height, 
 
 def update_speed(speed):
     pygame.time.set_timer(MOVEEVENT, speed)
-def change_music(filename):
+def change_music(filename, times):
     pygame.mixer.music.stop()
     pygame.mixer.music.load(filename) #music player
-    pygame.mixer.music.play(-1)
+    pygame.mixer.music.play(times)
 
-def eat_apple_and_define_new(x_head, y_head, x_apple, y_apple, score, grid_size, width, height, margin, snake,snake_moves, speed):
+def eat_apple_and_define_new(x_head, y_head, x_apple, y_apple, score, grid_size, width, height, margin, snake,snake_moves, speed, eat_sound):
     if (x_head == x_apple) and (y_head == y_apple):
         snake.append(1)
         score +=1
@@ -169,8 +168,12 @@ def eat_apple_and_define_new(x_head, y_head, x_apple, y_apple, score, grid_size,
             speed -= 20
             update_speed(speed)
         
-            
-        eat_sound.play()
+        print(eat_sound)
+        if isinstance(eat_sound, list):
+            eat_sound[0].play()
+        else:
+            eat_sound.play()
+
         x_apple, y_apple = create_random_position_apple(snake, snake_moves, grid_size, width, height, margin)
         snake, snake_moves = cut_lenght_of_list(snake, snake_moves)
     else:
@@ -266,12 +269,10 @@ def move_snake(direction, rect_xp, rect_yp):
         return rect_xp, rect_yp, x_tongue, y_tongue, tong_width, tong_height, pos_eyes_1,pos_eyes_2
 
 speed,volume,MOVEEVENT,t,BLACK,WHITE,GREEN,RED,BLUE,width,height,grid_size,margin,max_x_screen_size,max_y_screen_size,size,screen,snake,snake_moves,score, superspeed = init_variables()
-apple, apple_rect, bomb, bomb_rect, font = load_sprites()
 eat_sound, boom_sound = start_music()
+apple, apple_rect, bomb, bomb_rect, font = load_sprites()
 rect_xp,rect_yp,rect_change_xp,rect_change_yp,tong_width,tong_height,x_tongue,y_tongue,pos_eyes_1,pos_eyes_2,x_apple_random,y_apple_random, x_obstacle, y_obstacle, snake_moves,start_ticks,done,direction_state,do_again,gameover = reinitialize_game()
-
-
-
+only_once = True
 while done == False:
     for event in pygame.event.get():    # check for any events
         if event.type == pygame.QUIT:
@@ -301,7 +302,7 @@ while done == False:
  
             if event.key == pygame.K_0:
                 superspeed = True
-                change_music("superspeed.mp3")
+                change_music("superspeed.mp3", -1)
             if event.key == pygame.K_LEFT:
                 direction_state = "LEFT"
             if event.key == pygame.K_RIGHT:
@@ -316,9 +317,9 @@ while done == False:
             if event.key == pygame.K_y and gameover == True:
                 speed,volume,MOVEEVENT,t,BLACK,WHITE,GREEN,RED,BLUE,width,height,grid_size,margin,max_x_screen_size,max_y_screen_size,size,screen,snake,snake_moves,score, superspeed = init_variables()
                 apple, apple_rect,bomb, bomb_rect, font = load_sprites()
-                eat_sound = start_music()
                 rect_xp,rect_yp,rect_change_xp,rect_change_yp,tong_width,tong_height,x_tongue,y_tongue,pos_eyes_1,pos_eyes_2,x_apple_random,y_apple_random, x_obstacle, y_obstacle, snake_moves,start_ticks,done,direction_state,do_again,gameover = reinitialize_game()
-
+                start_music()
+            
         if event.type == MOVEEVENT: # is called every 't' milliseconds
             if superspeed == True:
                 update_speed(50)
@@ -326,10 +327,14 @@ while done == False:
             rect_xp, rect_yp, x_tongue, y_tongue, tong_width, tong_height, pos_eyes_1,pos_eyes_2 = move_snake(direction_state, rect_xp, rect_yp)
             pygame.display.update()
             record_snake_position(rect_xp, rect_yp) # adds the latest position to a list (--> snake_move)
-            x_apple_random, y_apple_random, score, snake, snake_moves, speed = eat_apple_and_define_new(rect_xp, rect_yp,x_apple_random, y_apple_random, score,grid_size, width, height, margin, snake, snake_moves,speed)
+            x_apple_random, y_apple_random, score, snake, snake_moves, speed = eat_apple_and_define_new(rect_xp, rect_yp,x_apple_random, y_apple_random, score,grid_size, width, height, margin, snake, snake_moves,speed,eat_sound)
 
     if gameover:
-        game_over()
+        if only_once:
+            game_over()
+            change_music("gameover.mp3",1)
+        else:
+            game_over()
     else:
         screen.fill(pygame.Color('WHITE'))
         show_grid()
