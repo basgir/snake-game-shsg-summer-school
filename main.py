@@ -188,9 +188,9 @@ def update_speed(speed):
 def change_music(filename):
     pygame.mixer.music.stop()
     pygame.mixer.music.load(filename) #music player
-    pygame.mixer.music.play(-1)
+    pygame.mixer.music.play(times)
 
-def eat_apple_and_define_new(x_head, y_head, x_apple, y_apple, score, grid_size, width, height, margin, snake,snake_moves, speed):
+def eat_apple_and_define_new(x_head, y_head, x_apple, y_apple, score, grid_size, width, height, margin, snake,snake_moves, speed, eat_sound):
     if (x_head == x_apple) and (y_head == y_apple):
         snake.append(1)
         score +=1
@@ -293,8 +293,8 @@ def move_snake(direction, rect_xp, rect_yp):
         return rect_xp, rect_yp, x_tongue, y_tongue, tong_width, tong_height, pos_eyes_1,pos_eyes_2
 
 speed,volume,MOVEEVENT,t,BLACK,WHITE,GREEN,RED,BLUE,width,height,grid_size,margin,max_x_screen_size,max_y_screen_size,size,screen,snake,snake_moves,score, superspeed = init_variables()
-apple, apple_rect, bomb, bomb_rect, font = load_sprites()
 eat_sound, boom_sound = start_music()
+apple, apple_rect, bomb, bomb_rect, font = load_sprites()
 rect_xp,rect_yp,rect_change_xp,rect_change_yp,tong_width,tong_height,x_tongue,y_tongue,pos_eyes_1,pos_eyes_2,x_apple_random,y_apple_random, x_obstacle, y_obstacle, snake_moves,start_ticks,done,direction_state,do_again,gameover = reinitialize_game()
 
 intro()
@@ -361,7 +361,7 @@ while done == False:
             rect_xp, rect_yp, x_tongue, y_tongue, tong_width, tong_height, pos_eyes_1,pos_eyes_2 = move_snake(direction_state, rect_xp, rect_yp)
             pygame.display.update()
             record_snake_position(rect_xp, rect_yp) # adds the latest position to a list (--> snake_move)
-            x_apple_random, y_apple_random, score, snake, snake_moves, speed = eat_apple_and_define_new(rect_xp, rect_yp,x_apple_random, y_apple_random, score,grid_size, width, height, margin, snake, snake_moves,speed)
+            x_apple_random, y_apple_random, score, snake, snake_moves, speed = eat_apple_and_define_new(rect_xp, rect_yp,x_apple_random, y_apple_random, score,grid_size, width, height, margin, snake, snake_moves,speed,eat_sound)
 
     if gameover:
         change_music("gameover.mp3")
