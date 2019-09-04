@@ -486,7 +486,10 @@ while done == False:
                 change_music("imblue.mp3")
             if event.key == pygame.K_4:
                 change_music("another_one_bites.mp3")
-                
+            
+            if event.key == pygame.K_5:
+                change_music("mchammer.mp3")
+            
             if event.key == pygame.K_m:
                 pygame.mixer.music.stop()
 
