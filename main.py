@@ -131,10 +131,12 @@ def intro():
 
 def game_over():
     """Shows the game_over screen and set the score"""
-    screen.fill(BLACK)
+    screen.fill(BLACK) # Change to a black screen
+
+    # Show the text
     show_rendert_txt("YOU DIED!", (255,0,0), 60, 250)
     show_rendert_txt(f"Score {score}", (255,255,255), 260, 80)
-    show_rendert_txt("Try again?...LOOSER!", (255,255,255), 400, 80)
+    show_rendert_txt("Try again?...LOSER!", (255,255,255), 400, 80)
     show_rendert_txt("(Y)es?...(N)o?", (255,255,255), 500, 80)
     pygame.display.flip()
 
@@ -484,6 +486,7 @@ while done == False:
                 change_music("imblue.mp3")
             if event.key == pygame.K_4:
                 change_music("another_one_bites.mp3")
+                
             if event.key == pygame.K_m:
                 pygame.mixer.music.stop()
 
