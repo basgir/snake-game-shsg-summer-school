@@ -471,6 +471,8 @@ while done == False:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
                 start = True
+
+            #Ture superspeed on
             if event.key == pygame.K_0:
                 superspeed = True
                 change_music("superspeed.mp3")
@@ -484,6 +486,8 @@ while done == False:
                 change_music("another_one_bites.mp3")
             if event.key == pygame.K_m:
                 pygame.mixer.music.stop()
+
+            # Change the direction state when a key is pressed then the snake moves at ticks.
             if event.key == pygame.K_LEFT:
                 direction_state = "LEFT"
             if event.key == pygame.K_RIGHT:
@@ -501,6 +505,7 @@ while done == False:
                 rect_xp,rect_yp,rect_change_xp,rect_change_yp,tong_width,tong_height,x_tongue,y_tongue,pos_eyes_1,pos_eyes_2,x_apple_random,y_apple_random, x_obstacle, y_obstacle, snake_moves,start_ticks,done,direction_state,do_again,gameover = reinitialize_game()
 
         if event.type == MOVEEVENT and start==True: # is called every 't' milliseconds
+            # If superspeed => Increase the speed
             if superspeed == True:
                 update_speed(50)
 
